@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator= require("validator")
 const userSchema =  new mongoose.Schema({
   firstName:{
     type: String,
@@ -22,19 +23,24 @@ match: /^[A-Za-z]+$/   // Only alphabets
     required:true,
     unique: true,
     trim:true,
-    match: /^\S+@\S+\.\S+$/  // Simple email regex
+    validate (value){
+      if (!validator.isEmail(value)) {
+        throw new Error("invalid email address"+ value);
+    }
+
+    }
 
   },
    password:{
     type:String,
     required:true,
     minilength:8,
-    validate: {
-  validator: function (value) {
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
-  },
-  message: "Password must include uppercase, lowercase, number, and special character"
-}
+      validate (value){
+      if (!validator.isStrongPassword(value)) {
+        throw new Error("enter a strong  password"+ value);
+    }
+
+    }
   },
   age:{
     type: Number,
@@ -51,7 +57,12 @@ match: /^[A-Za-z]+$/   // Only alphabets
   photoUrl:{
     type:String,
     default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvts5aHBstDkR8PigS4RmZkbZy78zpZoSuOw&s",
-    match: /^https?:\/\/.+/ // Ensure it’s a valid URL
+   validate (value){
+      if (!validator.isURL(value)) {
+        throw new Error("invalid URL"+ value);
+    }
+
+    }
   },
   about:{
     type:String,
