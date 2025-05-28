@@ -15,11 +15,17 @@ try{
  // encrypt the password
  const {password,firstName,lastName,emailId}= req.body;
  const passwordHash =  await bcrypt.hash(password,10);
- console.log(passwordHash);
+
    //creating a nwe instance of the user model
    const user = new User({firstName,lastName,emailId, password:passwordHash});
-    await user.save();
-    res.send("User registered successfully");
+     const saveduser=await user.save();
+     // create jwt token
+ const token = await saveduser.getJWT();
+
+//  add token to ccokie and send back to user
+res.cookie("token", token,{expires:new Date(Date.now()+8*3600000)})
+
+    res.json({message:"User registered successfully",data:saveduser});
    }
    catch(err){
      res.status(400).send("ERROR:"+err.message);

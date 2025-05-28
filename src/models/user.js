@@ -72,12 +72,7 @@ enum:{
     maxlength: 300,
     default:" this the default about the user"
   },
-location: {
-  type: String,
-  trim: true,
-  maxlength: 100,
-  default: "Remote"
-},
+
 
 experienceLevel: {
   type: String,
