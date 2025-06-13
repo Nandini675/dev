@@ -4,7 +4,7 @@ const { userAuth } = require("../middleware/auth");
 const User = require("../models/user");
  const connectionRequest=  require("../models/connectionrequest")
 
-
+const sendEmail = require("../utils/sendEmail");
  requestRouter.post("/request/send/:status/:touserID",
   userAuth,
   async(req,res)=>{
@@ -45,6 +45,8 @@ const connectionrequest= new connectionRequest({
      status});
      // saving the instance
       const data= await connectionrequest.save();
+
+      
       const action = status === "interested" ? "interested in" : "not interested in";
 const message = `${req.user.firstName} is ${action} ${touser.firstName}`;
 res.json({ message,
