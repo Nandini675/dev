@@ -30,24 +30,15 @@ const userRouter = require("./routes/user");
  app.use("/",userRouter);
   
 
-// connectDB().then(()=>{
-//    console.log("database connection established");
-//    app.listen(3000 ,()=>{
-//       console.log("listening on port");
-//    });
+connectDB().then(()=>{
+   console.log("database connection established");
+   app.listen(3000 ,()=>{
+      console.log("listening on port");
+   });
 
-// }).catch(err =>{
-//   console.error("database connection error");
-// })
-connectDB()
-  .then(() => {
-    console.log("✅ Database connected");
-  })
-  .catch((err) => {
-    console.error("❌ Database connection error:", err);
-  });
+}).catch(err =>{
+  console.error("database connection error");
+})
 
-// ✅ Export app instead of app.listen
-module.exports = app;
 
  //listening on a port
