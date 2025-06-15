@@ -9,12 +9,24 @@ const app= express();
 const { Error } = require("mongoose");
 
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://devconnect-frontened.vercel.app"
+];
+
 app.use(
   cors({
-    origin: "https://devconnect-frontened.vercel.app/",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
