@@ -17,6 +17,10 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.get("/", (req, res) => {
+  res.send("🚀 DevConnect backend is up and running!");
+});
+
  
 //   importing all the routes here
  const authRouter= require("./routes/auth");
