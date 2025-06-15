@@ -11,7 +11,7 @@ const { Error } = require("mongoose");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://devconnect-frontened.vercel.app/",
     credentials: true,
   })
 );
