@@ -7,6 +7,14 @@ const User = require("../models/user");
 const bcrypt= require("bcrypt");
 const {userAuth} = require("../middleware/auth");
  const jwt= require("jsonwebtoken");
+ const isProduction = process.env.NODE_ENV === "production";
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "None" : "Lax",
+  expires: new Date(Date.now() + 8 * 3600000), // 8 hours
+};
+
   authRouter.post("/signup", async (req,res) => {
  
 try{
@@ -23,7 +31,8 @@ try{
  const token = await saveduser.getJWT();
 
 //  add token to ccokie and send back to user
-res.cookie("token", token,{expires:new Date(Date.now()+8*3600000)})
+// res.cookie("token", token,{expires:new Date(Date.now()+8*3600000)})
+   res.cookie("token", token, cookieOptions);
 
     res.json({message:"User registered successfully",data:saveduser});
    }
@@ -48,7 +57,8 @@ res.cookie("token", token,{expires:new Date(Date.now()+8*3600000)})
  const token = await user.getJWT();
 
 //  add token to ccokie and send back to user
-res.cookie("token", token,{expires:new Date(Date.now()+8*3600000)})
+// res.cookie("token", token,{expires:new Date(Date.now()+8*3600000)})
+    res.cookie("token", token, cookieOptions);
 res.send("login successfull");
  }
  else{
@@ -62,9 +72,15 @@ res.send("login successfull");
 })
 
 authRouter.post("/logout",async(req,res)=>{
-    res.cookie("token",null,{
-        expires:new Date(Date.now()),
-    }) ;
+    // res.cookie("token",null,{
+    //     expires:new Date(Date.now()),
+    // }) ;
+    res.cookie("token", null, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
+    expires: new Date(Date.now()),
+  });
     res.send("logout successfully");
 })
 

@@ -53,7 +53,7 @@ connectDB().then(()=>{
    });
 
 }).catch(err =>{
-  console.error("database connection error");
+  console.error("database connection error",err);
 })
 
 
