@@ -5,7 +5,9 @@ require("dotenv").config();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const http = require("http");
 const app= express();
+require("./utils/cronjob");
 const { Error } = require("mongoose");
 
 
@@ -14,20 +16,20 @@ const allowedOrigins = [
   "https://devconnect-frontened.vercel.app"
 ];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-
+const corsOptions = {
+  origin: function (origin, callback) {
+    ("Origin Attempted:", origin);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+};
+app.use( cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("🚀 DevConnect backend is up and running!");
@@ -39,16 +41,22 @@ app.get("/", (req, res) => {
  const profileRouter= require("./routes/profile");
  const requestRouter= require("./routes/request");
 const userRouter = require("./routes/user");
+const chatRouter = require("./routes/chat");
  // usig these routes
  app.use("/",authRouter);
  app.use("/",profileRouter);
  app.use("/",requestRouter);
  app.use("/",userRouter);
+ const initializeSocket = require("./utils/socket");
+
+  app.use("/", chatRouter);
   
+const server = http.createServer(app);
+initializeSocket(server);
 
 connectDB().then(()=>{
    console.log("database connection established");
-   app.listen(3000 ,()=>{
+   server.listen(process.env.PORT ,()=>{
       console.log("listening on port");
    });
 
