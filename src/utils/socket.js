@@ -10,6 +10,7 @@ const getSecretRoomId = (userId, targetUserId) => {
     .digest("hex");
 };
 
+// : This function sets up the Socket.IO server.
 const initializeSocket = (server) => {
  
    const io = socket(server, {
@@ -29,14 +30,14 @@ const initializeSocket = (server) => {
   });
  
   
-
+// his is the main listener. Whenever a new client connects to your server via a WebSocket, the callback function is executed
   io.on("connection", (socket) => {
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
       const roomId = getSecretRoomId(userId, targetUserId);
       console.log(firstName + " joined Room : " + roomId);
       socket.join(roomId);
     });
-
+//  The server listens for new messages.
     socket.on(
       "sendMessage",
       async ({ firstName, lastName, userId, targetUserId, text }) => {
@@ -64,6 +65,7 @@ const initializeSocket = (server) => {
           });
 
           await chat.save();
+         //sends the message only to the clients currently in that specific chat room. 
           io.to(roomId).emit("messageReceived", { firstName, lastName, text });
         } catch (err) {
           console.log(err);
