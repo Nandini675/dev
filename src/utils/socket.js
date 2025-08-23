@@ -2,7 +2,7 @@ const socket = require("socket.io");
 const crypto = require("crypto");
 const { Chat } = require("../models/chat");
 const ConnectionRequest = require("../models/connectionrequest");
-
+const jwt = require("jsonwebtoken");
 const getSecretRoomId = (userId, targetUserId) => {
   return crypto
     .createHash("sha256")
@@ -15,13 +15,20 @@ const initializeSocket = (server) => {
    const io = socket(server, {
   cors: {
     origin: [
-      "http://localhost:5173",                       // local dev
+      "http://localhost:5173", 
+           "http://localhost:5174",                 // local dev
       "https://devconnect-frontened.vercel.app"     // deployed frontend
-    ]
-  }
+    ],
+        methods: ["GET", "POST"],
+          credentials: true,
+
+  },
+  path: "/socket.io"
 
 
   });
+ 
+  
 
   io.on("connection", (socket) => {
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
